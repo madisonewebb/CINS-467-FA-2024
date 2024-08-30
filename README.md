@@ -1,5 +1,7 @@
 ## Madison Webb
-Private repo for CINS 467 assignments: _**Fall 2024**_
+
+Private repo for CINS 467 assignments: **_Fall 2024_**
 ---
-1. Chico State Username: mewebb
-2. GitLab Username: madisonewebb28
+- Chico State Username: mewebb
+- GitLab Username: madisonewebb28
+
