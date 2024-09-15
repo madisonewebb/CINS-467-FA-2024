@@ -5,7 +5,7 @@ pages:
   image: ghcr.io/cirruslabs/flutter:3.24.2
   stage: deploy
   before_script:
-    - cd app01
+    - cd testapp
     - flutter packages get
   script:
     - flutter build web --release
