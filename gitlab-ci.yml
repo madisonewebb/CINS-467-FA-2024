@@ -1,0 +1,18 @@
+stages:
+    - deploy
+
+pages:
+  image: ghcr.io/cirruslabs/flutter:3.24.2
+  stage: deploy
+  before_script:
+    - cd testapp
+    - flutter packages get
+  script:
+    - flutter build web --release
+    - cp -r build/web ../public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "assignment2"
+  environment: production
