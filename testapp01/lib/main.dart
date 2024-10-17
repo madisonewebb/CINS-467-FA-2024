@@ -1,128 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'storage.dart'; // Importing storage.dart
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+void main() => runApp(CameraApp());
+
+class CameraApp extends StatefulWidget {
+  @override
+  _CameraAppState createState() => _CameraAppState();
 }
 
-class MyApp extends StatelessWidget {
+class _CameraAppState extends State<CameraApp> {
+  List<File> _images = [];
+
+  // Function to request camera permission
+  Future<void> _requestCameraPermission() async {
+    PermissionStatus status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      _takePhoto();  // If permission granted, launch the camera
+    } else if (status.isDenied) {
+      print('Camera permission denied');
+    } else if (status.isPermanentlyDenied) {
+      // If the user permanently denies permission, direct them to app settings
+      openAppSettings();
+    }
+  }
+
+  // Function to take a photo
+  Future<void> _takePhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _images.add(File(pickedFile.path));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase Form App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Firebase Form Example'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(child: MyForm()), // Form for user input
-          Expanded(child: UserData()), // View of data from Firebase
-        ],
-      ),
-    );
-  }
-}
-
-class MyForm extends StatefulWidget {
-  @override
-  _MyFormState createState() => _MyFormState();
-}
-
-class _MyFormState extends State<MyForm> {
-  final _formKey = GlobalKey<FormState>();
-  String name = '';
-  int age = 0;
-
-  FirebaseService _firebaseService = FirebaseService(); // Initialize FirebaseService
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Name'),
-              onChanged: (value) {
-                name = value;
-              },
-              validator: (value) {
-                return value!.isEmpty ? 'Please enter your name' : null;
-              },
+      home: Scaffold(
+        backgroundColor: Colors.blue[900],
+        appBar: AppBar(
+          title: Text(
+            'Camera App',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.blue[900],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Container(
+                color: Colors.blue[900],
+                child: Center(
+                  child: _images.isEmpty
+                      ? Text('No image taken.', style: TextStyle(color: Colors.white))  // White text to contrast dark background
+                      : Image.file(_images.last),
+                ),
+              ),
             ),
-            DropdownButtonFormField<int>(
-              decoration: InputDecoration(labelText: 'Age'),
-              items: List.generate(100, (index) => index + 1).map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text('$value'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  age = value!;
-                });
-              },
-              validator: (value) {
-                return value == null ? 'Please select your age' : null;
-              },
+            Container(
+              height: 100,
+              color: Colors.blue[900],  // Set dark blue background for the thumbnail list area
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _images.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.file(_images[index], width: 80, height: 80),
+                  );
+                },
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _firebaseService.saveUserData(name, age); // Save to Firebase
-                  _formKey.currentState!.reset(); // Reset form after submission
-                }
-              },
-              child: Text('Submit'),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: _requestCameraPermission,  // Request camera permission before taking a photo
+                child: Text('Take Photo'),
+              ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class UserData extends StatelessWidget {
-  FirebaseService _firebaseService = FirebaseService(); // Initialize FirebaseService
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _firebaseService.getUsersStream(), // Fetch real-time data
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        return ListView(
-          children: snapshot.data!.docs.map((doc) {
-            return ListTile(
-              title: Text(doc['name']),
-              subtitle: Text('Age: ${doc['age']}'),
-            );
-          }).toList(),
-        );
-      },
     );
   }
 }
