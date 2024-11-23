@@ -55,52 +55,56 @@ class _MyFormState extends State<MyForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Name'),
-              onChanged: (value) {
-                name = value;
-              },
-              validator: (value) {
-                return value!.isEmpty ? 'Please enter your name' : null;
-              },
-            ),
-            DropdownButtonFormField<int>(
-              decoration: InputDecoration(labelText: 'Age'),
-              items: List.generate(100, (index) => index + 1).map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text('$value'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  age = value!;
-                });
-              },
-              validator: (value) {
-                return value == null ? 'Please select your age' : null;
-              },
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _firebaseService.saveUserData(name, age); // Save to Firebase
-                  _formKey.currentState!.reset(); // Reset form after submission
-                }
-              },
-              child: Text('Submit'),
-            ),
-          ],
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Added for alignment
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Name'),
+                onChanged: (value) {
+                  name = value;
+                },
+                validator: (value) {
+                  return value!.isEmpty ? 'Please enter your name' : null;
+                },
+              ),
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(labelText: 'Age'),
+                items: List.generate(100, (index) => index + 1).map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text('$value'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    age = value!;
+                  });
+                },
+                validator: (value) {
+                  return value == null ? 'Please select your age' : null;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _firebaseService.saveUserData(name, age); // Save to Firebase
+                    _formKey.currentState!.reset(); // Reset form after submission
+                  }
+                },
+                child: Text('Submit'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
 
 class UserData extends StatelessWidget {
   FirebaseService _firebaseService = FirebaseService(); // Initialize FirebaseService
