@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'storage.dart'; // Importing storage.dart
+import 'storage.dart'; // Ensure storage.dart exists and is correctly implemented
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +49,7 @@ class _MyFormState extends State<MyForm> {
   String name = '';
   int age = 0;
 
-  FirebaseService _firebaseService = FirebaseService(); // Initialize FirebaseService
+  final FirebaseService _firebaseService = FirebaseService(); // Made final for better practices
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +59,14 @@ class _MyFormState extends State<MyForm> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Added for alignment
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextFormField(
                 decoration: InputDecoration(labelText: 'Name'),
                 onChanged: (value) {
-                  name = value;
+                  setState(() {
+                    name = value;
+                  });
                 },
                 validator: (value) {
                   return value!.isEmpty ? 'Please enter your name' : null;
@@ -72,6 +74,7 @@ class _MyFormState extends State<MyForm> {
               ),
               DropdownButtonFormField<int>(
                 decoration: InputDecoration(labelText: 'Age'),
+                value: age == 0 ? null : age,
                 items: List.generate(100, (index) => index + 1).map((int value) {
                   return DropdownMenuItem<int>(
                     value: value,
@@ -92,7 +95,10 @@ class _MyFormState extends State<MyForm> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _firebaseService.saveUserData(name, age); // Save to Firebase
-                    _formKey.currentState!.reset(); // Reset form after submission
+                    setState(() {
+                      name = '';
+                      age = 0; // Reset explicitly
+                    });
                   }
                 },
                 child: Text('Submit'),
@@ -107,7 +113,10 @@ class _MyFormState extends State<MyForm> {
 
 
 class UserData extends StatelessWidget {
-  FirebaseService _firebaseService = FirebaseService(); // Initialize FirebaseService
+  final FirebaseService _firebaseService = FirebaseService(); // Marked as final
+
+  UserData({Key? key})
+      : super(key: key); // Added a key parameter to the constructor
 
   @override
   Widget build(BuildContext context) {

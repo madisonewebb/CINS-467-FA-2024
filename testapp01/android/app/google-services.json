@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "151970350127",
-    "project_id": "madisonwebb-cins467",
-    "storage_bucket": "madisonwebb-cins467.appspot.com"
+    "project_number": "655189619881",
+    "project_id": "testapp01-3fa1f",
+    "storage_bucket": "testapp01-3fa1f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:151970350127:android:1de067c9179e187a80f2da",
+        "mobilesdk_app_id": "1:655189619881:android:c0dc2dfcc5004b4c0725b8",
         "android_client_info": {
-          "package_name": "com.madisonwebb.cins467app"
+          "package_name": "com.example.testapp01"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAY0mmCAZ4QfKhhnhgYBltgkM5OXOvl0j4"
+          "current_key": "AIzaSyCO439rKORWiNGZcGk1al4E0Kqom-Sq-_4"
         }
       ],
       "services": {

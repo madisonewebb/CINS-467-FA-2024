@@ -1,23 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseService {
-  final CollectionReference usersCollection =
+  final CollectionReference _userCollection =
       FirebaseFirestore.instance.collection('users');
 
-  // Save data to Firebase
   Future<void> saveUserData(String name, int age) async {
     try {
-      await usersCollection.add({
-        'name': name,
-        'age': age,
-      });
+      print('Attempting to save: $name, $age');
+      await _userCollection.add({'name': name, 'age': age});
+      print('Data saved successfully: $name, $age');
     } catch (e) {
       print('Error saving user data: $e');
     }
   }
 
-  // Stream for retrieving user data in real-time
   Stream<QuerySnapshot> getUsersStream() {
-    return usersCollection.snapshots();
+    return _userCollection.snapshots();
   }
 }
