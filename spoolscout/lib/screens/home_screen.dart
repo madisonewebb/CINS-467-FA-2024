@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -6,6 +7,17 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Spool Scout'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

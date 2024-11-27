@@ -1,39 +1,63 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'favorites_screen.dart';
+import 'myfilament_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
+  final User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Username',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text('Email: user@example.com'),
+            if (user?.photoURL != null)
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(user!.photoURL!),
+              ),
             SizedBox(height: 16),
             Text(
-              'My Reviews',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              user?.displayName ?? 'No Name',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 2, // placeholder for reviews
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Review ${index + 1}'),
-                    subtitle: Text('Great filament!'),
-                  );
-                },
-              ),
+            SizedBox(height: 8),
+            Text(
+              user?.email ?? 'No Email',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: Text('Logout'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoritesScreen()),
+                );
+              },
+              child: Text('My Favorites'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyFilamentsScreen()),
+                );
+              },
+              child: Text('My Filaments'),
             ),
           ],
         ),
