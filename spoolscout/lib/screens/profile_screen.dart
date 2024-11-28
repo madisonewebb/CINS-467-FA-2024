@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'favorites_screen.dart';
 import 'myfilament_screen.dart';
+import 'add_filament_screen.dart'; // Import the Add Filament screen
 
 class ProfileScreen extends StatelessWidget {
   final User? user = FirebaseAuth.instance.currentUser;
@@ -58,6 +59,16 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
               child: Text('My Filaments'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddFilamentScreen()),
+                );
+              },
+              child: Text('Add New Filament'),
             ),
           ],
         ),

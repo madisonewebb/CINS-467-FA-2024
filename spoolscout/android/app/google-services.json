@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "280911399663-vjqi2455k1i52unuu6dv5rhadeqj8jjc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.spoolscout",
+            "certificate_hash": "7da71fcc9bc60a5b8a110aee589702e3a2ca87db"
+          }
+        },
+        {
           "client_id": "280911399663-iq4epivbb2q42q6aklen9edn3v6uf7sv.apps.googleusercontent.com",
           "client_type": 3
         }

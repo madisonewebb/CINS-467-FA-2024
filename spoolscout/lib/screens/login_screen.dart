@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -110,6 +111,16 @@ class LoginScreen extends StatelessWidget {
             TextButton(
               onPressed: () => _sendPasswordResetEmail(context),
               child: Text('Forgot Password?'),
+            ),
+            SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                );
+              },
+              child: Text("Don't have an account? Sign up here!"),
             ),
           ],
         ),
