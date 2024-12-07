@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ class SpoolScoutApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AuthCheck(), // Show AuthCheck with Splash Screen
+      home: SplashScreen(), // Start with the SplashScreen
       routes: {
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
@@ -29,28 +30,27 @@ class SpoolScoutApp extends StatelessWidget {
   }
 }
 
-class AuthCheck extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show the SplashScreen while checking auth state
-          return SplashScreen();
-        } else if (snapshot.hasData) {
-          // User is authenticated; navigate to HomeScreen
-          return HomeScreen();
-        } else {
-          // User is not authenticated; show LoginScreen
-          return LoginScreen();
-        }
-      },
-    );
-  }
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class SplashScreen extends StatelessWidget {
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToAuthCheck();
+  }
+
+  void _navigateToAuthCheck() async {
+    await Future.delayed(const Duration(seconds: 3)); // Wait for 3 seconds
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => AuthCheck()), // Navigate to AuthCheck
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,10 +58,12 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // App Logo or Loading Animation
+            // App logo
             Image.asset(
-              'assets/logo.png', // Replace with your logo file path
-              height: 120,
+              'assets/images/logo.png', // Logo file path
+              height: 150,
+              width: 150,
+              fit: BoxFit.contain,
             ),
             SizedBox(height: 20),
             CircularProgressIndicator(), // Loading spinner
@@ -73,6 +75,29 @@ class SplashScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class AuthCheck extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a temporary loading screen
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasData) {
+          // User is authenticated; navigate to HomeScreen
+          return HomeScreen();
+        } else {
+          // User is not authenticated; show LoginScreen
+          return LoginScreen();
+        }
+      },
     );
   }
 }

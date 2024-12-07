@@ -1,11 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'add_filament_screen.dart';
 import 'favorites_screen.dart';
 import 'myfilament_screen.dart';
-import 'add_filament_screen.dart'; // Import the Add Filament screen
+import 'admin_panel_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final User? user = FirebaseAuth.instance.currentUser;
+  bool isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminRole();
+  }
+
+  Future<void> _checkAdminRole() async {
+    if (user != null) {
+      final idTokenResult = await user!.getIdTokenResult();
+      setState(() {
+        isAdmin = idTokenResult.claims?['admin'] == true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +83,7 @@ class ProfileScreen extends StatelessWidget {
               child: Text('My Filaments'),
             ),
             SizedBox(height: 16),
+            // Add New Filament Button
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -70,6 +93,21 @@ class ProfileScreen extends StatelessWidget {
               },
               child: Text('Add New Filament'),
             ),
+            if (isAdmin) ...[
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminPanelScreen()),
+                  );
+                },
+                child: Text('Admin Panel'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+              ),
+            ],
           ],
         ),
       ),
