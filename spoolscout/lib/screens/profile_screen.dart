@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'add_filament_screen.dart';
-import 'favorites_screen.dart';
-import 'myfilament_screen.dart';
 import 'admin_panel_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -134,30 +132,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _profileImage = File(pickedImage.path);
       });
-
-      // Upload to Firebase Storage (if required)
-      // Save the file path or URL to the user's profile in Firestore
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Removes the white strip at the top
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Profile',
           style: TextStyle(
-            color: const Color.fromRGBO(37, 150, 190, 1), // Custom RGB color
+            color: const Color.fromRGBO(37, 150, 190, 1),
           ),
         ),
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Wallpaper background
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -173,7 +167,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Profile Picture
                     GestureDetector(
                       onTap: _pickProfileImage,
                       child: CircleAvatar(
@@ -191,7 +184,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    // Editable Name
                     TextField(
                       controller: _nameController,
                       textAlign: TextAlign.center,
@@ -212,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         color: const Color.fromRGBO(
-                            37, 150, 190, 1), // Custom RGB color
+                            37, 150, 190, 1),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -249,42 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FavoritesScreen()),
-                        );
-                      },
-                      child: Text(
-                        'My Favorites',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyFilamentsScreen()),
-                        );
-                      },
-                      child: Text(
-                        'My Filaments',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    // Add New Filament Button
+                    
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(

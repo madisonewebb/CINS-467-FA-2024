@@ -1,8 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:SpoolScout/screens/filament_detail_screen.dart';
 
 class EditSubmissionScreen extends StatefulWidget {
   final DocumentSnapshot submission;
@@ -47,7 +48,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
     temperatureController = TextEditingController(
         text: widget.submission['temperature'].toString());
 
-    // Convert attributes to a Set<String>
+    // convert attributes to a Set<String>
     if (widget.submission['attributes'] != null) {
       final attributes = widget.submission['attributes'];
       selectedAttributes.addAll(
@@ -78,10 +79,21 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
     }
   }
 
-  Future<void> _approveSubmission() async {
-    final uniqueId =
-        FirebaseFirestore.instance.collection('filaments').doc().id;
+Future<void> _approveSubmission() async {
+  final uniqueId = FirebaseFirestore.instance.collection('filaments').doc().id;
 
+  try {
+    // Handle image upload
+    String? imageUrl;
+    if (_selectedImage != null) {
+      final storageRef = FirebaseStorage.instance.ref().child('filaments/$uniqueId.jpg');
+      await storageRef.putFile(_selectedImage!);
+      imageUrl = await storageRef.getDownloadURL();
+    } else {
+      imageUrl = widget.submission['imageUrl'];
+    }
+
+    // Prepare updated data
     final updatedData = {
       'id': uniqueId,
       'type': typeController.text.trim(),
@@ -89,24 +101,36 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       'attributes': selectedAttributes.toList(),
       'temperature': int.tryParse(temperatureController.text.trim()) ?? 0,
       'status': 'approved',
-      'imageUrl': _selectedImage != null
-          ? _selectedImage!.path
-          : widget.submission['imageUrl'],
+      'imageUrl': imageUrl,
     };
 
-    await FirebaseFirestore.instance
-        .collection('filaments')
-        .doc(uniqueId)
-        .set(updatedData);
+    // Save the updated filament in Firestore
+    await FirebaseFirestore.instance.collection('filaments').doc(uniqueId).set(updatedData);
 
+    // Delete the original submission
     await widget.submission.reference.delete();
 
+    // Navigate to FilamentDetailScreen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FilamentDetailScreen(
+          filament: updatedData, // Pass the updated filament data
+        ),
+      ),
+    );
+
+    // Show success message (optional, as the user is navigated away)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Submission approved and added to the database.')),
     );
-
-    Navigator.pop(context);
+  } catch (e) {
+    // Handle errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error approving submission: $e')),
+    );
   }
+}
 
   Future<void> _rejectSubmission() async {
     await widget.submission.reference.update({'status': 'rejected'});

@@ -13,24 +13,24 @@ class BadgeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 100,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      width: 150, // Increased size (100 * 1.5)
+      height: 150, // Increased size (100 * 1.5)
+      margin: const EdgeInsets.symmetric(horizontal: 12), // Adjusted spacing
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Solid outer circle
           CustomPaint(
-            size: const Size(100, 100),
+            size: const Size(150, 150), // Adjust size
             painter: SolidCirclePainter(
               color: Colors.black,
-              strokeWidth: 3,
+              strokeWidth: 4.5, // Increased stroke width (3 * 1.5)
             ),
           ),
           // Solid circle for background
           Container(
-            width: 90,
-            height: 90,
+            width: 135, // Increased size (90 * 1.5)
+            height: 135, // Increased size (90 * 1.5)
             decoration: BoxDecoration(
               color: backgroundColor,
               shape: BoxShape.circle,
@@ -38,12 +38,12 @@ class BadgeWidget extends StatelessWidget {
           ),
           // Dashed inner circle
           CustomPaint(
-            size: const Size(100, 100),
+            size: const Size(150, 150), // Adjust size
             painter: DashedCirclePainter(
               color: Colors.black,
-              strokeWidth: 2,
-              dashLength: 5,
-              radiusFactor: 0.85, // Adjust radius of dashed circle
+              strokeWidth: 3, // Increased stroke width (2 * 1.5)
+              dashLength: 7.5, // Increased dash length (5 * 1.5)
+              radiusFactor: 0.85, // Keep the same radius factor
             ),
           ),
           // Label text with ChickenWonder font
@@ -54,7 +54,7 @@ class BadgeWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontFamily: 'ChickenWonder', // Specify the ChickenWonder font
-                fontSize: 10,
+                fontSize: 15, // Increased font size (10 * 1.5)
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -72,7 +72,7 @@ class SolidCirclePainter extends CustomPainter {
 
   SolidCirclePainter({
     required this.color,
-    this.strokeWidth = 3.0,
+    this.strokeWidth = 4.5, // Updated default
   });
 
   @override
@@ -98,9 +98,9 @@ class DashedCirclePainter extends CustomPainter {
 
   DashedCirclePainter({
     required this.color,
-    this.strokeWidth = 2.0,
-    this.dashLength = 5.0,
-    this.radiusFactor = 0.85, // Reduced to make the dashed line smaller
+    this.strokeWidth = 3.0, // Updated default
+    this.dashLength = 7.5, // Updated default
+    this.radiusFactor = 0.85, // Keep the same
   });
 
   @override
@@ -111,7 +111,7 @@ class DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final double radius = (size.width / 2) * radiusFactor - strokeWidth;
-    const double gapSize = 5.0;
+    const double gapSize = 7.5; // Adjusted to match new dashLength
 
     double totalCircumference = 2 * 3.141592653589793 * radius;
     double dashCount =

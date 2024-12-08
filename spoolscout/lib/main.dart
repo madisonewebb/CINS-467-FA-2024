@@ -31,6 +31,68 @@ class SpoolScoutApp extends StatelessWidget {
   }
 }
 
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToAuthCheck();
+  }
+
+  void _navigateToAuthCheck() async {
+    await Future.delayed(const Duration(seconds: 3)); // Wait for 3 seconds
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthCheck()), // Navigate to AuthCheck
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/wallpaper.png', // Ensure wallpaper exists
+            fit: BoxFit.cover,
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo.png', // Your logo path
+                  height: 150,
+                  width: 150,
+                ),
+                SizedBox(height: 20),
+                CircularProgressIndicator(
+                  color: const Color.fromRGBO(4, 107, 123, 1), // Custom spinner color
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Loading Spool Scout...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'ChickenWonder',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

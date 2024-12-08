@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 
-class BadgeWidget extends StatelessWidget {
-  final String label;
+class ImageBadgeWidget extends StatelessWidget {
+  final String imageUrl;
   final Color backgroundColor;
 
-  const BadgeWidget({
+  const ImageBadgeWidget({
     Key? key,
-    required this.label,
+    required this.imageUrl,
     required this.backgroundColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 100,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      width: 180, // Increased size
+      height: 180, // Increased size
+      margin: const EdgeInsets.symmetric(horizontal: 16), // Adjusted spacing
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Solid outer circle
           CustomPaint(
-            size: const Size(100, 100),
+            size: const Size(180, 180), // Adjust size
             painter: SolidCirclePainter(
               color: Colors.black,
-              strokeWidth: 3,
+              strokeWidth: 6, // Increased stroke width
             ),
           ),
           // Solid circle for background
           Container(
-            width: 90,
-            height: 90,
+            width: 160, // Increased size
+            height: 160, // Increased size
             decoration: BoxDecoration(
               color: backgroundColor,
               shape: BoxShape.circle,
@@ -38,25 +38,25 @@ class BadgeWidget extends StatelessWidget {
           ),
           // Dashed inner circle
           CustomPaint(
-            size: const Size(100, 100),
+            size: const Size(180, 180), // Adjust size
             painter: DashedCirclePainter(
               color: Colors.black,
-              strokeWidth: 2,
-              dashLength: 5,
-              radiusFactor: 0.85, // Adjust radius of dashed circle
+              strokeWidth: 4, // Increased stroke width
+              dashLength: 10, // Increased dash length
+              radiusFactor: 0.85, // Keep the same radius factor
             ),
           ),
-          // Label text with ChickenWonder font
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'ChickenWonder', // Specify the ChickenWonder font
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+          // Image instead of text
+          ClipOval(
+            child: Image.network(
+              imageUrl,
+              width: 140, // Adjusted size to fit the larger badge
+              height: 140, // Adjusted size
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Icon(
+                Icons.image_not_supported,
+                size: 60, // Larger placeholder icon
+                color: Colors.grey,
               ),
             ),
           ),
@@ -72,7 +72,7 @@ class SolidCirclePainter extends CustomPainter {
 
   SolidCirclePainter({
     required this.color,
-    this.strokeWidth = 3.0,
+    this.strokeWidth = 6.0, // Updated default
   });
 
   @override
@@ -98,9 +98,9 @@ class DashedCirclePainter extends CustomPainter {
 
   DashedCirclePainter({
     required this.color,
-    this.strokeWidth = 2.0,
-    this.dashLength = 5.0,
-    this.radiusFactor = 0.85, // Reduced to make the dashed line smaller
+    this.strokeWidth = 4.0, // Updated default
+    this.dashLength = 10.0, // Updated default
+    this.radiusFactor = 0.85, // Keep the same
   });
 
   @override
@@ -111,7 +111,7 @@ class DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final double radius = (size.width / 2) * radiusFactor - strokeWidth;
-    const double gapSize = 5.0;
+    const double gapSize = 10.0; // Adjusted to match new dashLength
 
     double totalCircumference = 2 * 3.141592653589793 * radius;
     double dashCount =

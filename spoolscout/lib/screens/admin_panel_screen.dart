@@ -10,7 +10,7 @@ class AdminPanelScreen extends StatelessWidget {
       final docRef =
           FirebaseFirestore.instance.collection('submittedFilaments').doc(id);
 
-      // Move to the approved filaments collection
+      // move to the approved filaments collection upon approval
       final docSnapshot = await docRef.get();
       if (docSnapshot.exists) {
         final filamentData = docSnapshot.data();
@@ -50,16 +50,15 @@ class AdminPanelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Extend the body behind AppBar
+      extendBodyBehindAppBar: true,  // extend the body behind AppBar
       appBar: AppBar(
         title: const Text('Admin Panel'),
-        backgroundColor: Colors.transparent, // Transparent AppBar
-        elevation: 0, // Remove shadow
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Wallpaper background
           Image.asset(
             'assets/images/wallpaper.png',
             fit: BoxFit.cover,
@@ -87,7 +86,6 @@ class AdminPanelScreen extends StatelessWidget {
                         as Map<String, dynamic>;
                     final id = submittedFilaments[index].id;
 
-                    // Ensure attributes are properly displayed
                     final attributes = filament['attributes'];
                     final attributeList = attributes is List
                         ? attributes

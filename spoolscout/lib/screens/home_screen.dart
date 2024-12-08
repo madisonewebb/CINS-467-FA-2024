@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Add Firestore import
-import 'filtered_filaments_screen.dart'; // Import filtered filaments screen
-import 'filament_detail_screen.dart'; // Import filament detail screen
-import 'profile_screen.dart'; // Import Profile Screen
-import '../widgets/badge_icon.dart'; // Ensure correct import path
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'filtered_filaments_screen.dart';
+import 'filament_detail_screen.dart';
+import 'profile_screen.dart';
+import '../widgets/badge_icon.dart';
 import 'dart:math';
 
 class HomeScreen extends StatelessWidget {
@@ -16,18 +16,14 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Wallpaper background
           Image.asset(
             'assets/images/wallpaper.png',
             fit: BoxFit.cover,
           ),
-          // Foreground content
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // App Bar Section
-                // App Bar Section
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -36,12 +32,11 @@ class HomeScreen extends StatelessWidget {
                       Row(
                         children: [
                           Image.asset(
-                            'assets/images/logo.png', // Path to the tiny logo
-                            height: 48, // Adjust size for the tiny logo
+                            'assets/images/logo.png',
+                            height: 48,
                             width: 48,
                           ),
-                          const SizedBox(
-                              width: 8), // Space between logo and text
+                          const SizedBox(width: 8),
                           Text(
                             'Home',
                             style: TextStyle(
@@ -49,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Color.fromRGBO(
-                                  4, 107, 123, 1), // Ensures text is readable
+                                4, 107, 123, 1),
                             ),
                           ),
                         ],
@@ -75,7 +70,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Categories Section
                 sectionHeader('Categories'),
                 horizontalBadgeList(
                   labels: [
@@ -109,7 +103,6 @@ class HomeScreen extends StatelessWidget {
                   context: context,
                 ),
 
-                // Favorites Section
                 sectionHeader('Favorites'),
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -139,7 +132,6 @@ class HomeScreen extends StatelessWidget {
                     );
                   },
                 ),
-                // My Filaments Section
                 sectionHeader('My Filaments'),
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -186,12 +178,11 @@ class HomeScreen extends StatelessWidget {
           fontFamily: 'ChickenWonder',
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Color.fromRGBO(4, 107, 123, 1), // Ensures text is readable
+          color: Color.fromRGBO(4, 107, 123, 1),
         ),
       ),
     );
   }
-  // Import for random color generation
 
   Widget horizontalBadgeList({
     required List<String> labels,
@@ -203,7 +194,7 @@ class HomeScreen extends StatelessWidget {
     );
 
     return SizedBox(
-      height: 100,
+      height: 150,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: labels.asMap().entries.map((entry) {
@@ -219,8 +210,13 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             },
-            child:
-                BadgeWidget(label: label, backgroundColor: randomColors[index]),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: BadgeWidget(
+                label: label,
+                backgroundColor: randomColors[index],
+              ),
+            ),
           );
         }).toList(),
       ),
@@ -228,13 +224,21 @@ class HomeScreen extends StatelessWidget {
   }
 
   Color _generateRandomColor() {
+    // define a list of colors using hex codes
+    final List<Color> predefinedColors = [
+      const Color(0xFF4CAF50),
+      const Color(0xFF2196F3),
+      const Color(0xFFFFC107),
+      const Color(0xFFFF5722),
+      const Color(0xFFE91E63),
+      const Color(0xFF9C27B0),
+      const Color(0xFFFFEB3B),
+      const Color(0xFF795548),
+      const Color(0xFF607D8B), 
+    ];
+
     final Random random = Random();
-    return Color.fromARGB(
-      255,
-      random.nextInt(256), // Red
-      random.nextInt(256), // Green
-      random.nextInt(256), // Blue
-    );
+    return predefinedColors[random.nextInt(predefinedColors.length)];
   }
 
   Widget horizontalImageBadgeList({
@@ -242,7 +246,7 @@ class HomeScreen extends StatelessWidget {
     required List<Map<String, dynamic>> filaments,
   }) {
     return SizedBox(
-      height: 120, // Adjust height to accommodate the brand name
+      height: 150,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: filaments.map((filament) {
@@ -259,22 +263,21 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  width: 100,
-                  height: 100,
+                  width: 135,
+                  height: 135,
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Use BadgeWidget's style for dashed and solid circles
                       CustomPaint(
-                        size: const Size(100, 100),
+                        size: const Size(135, 135),
                         painter: SolidCirclePainter(
                           color: Colors.black,
                           strokeWidth: 3,
                         ),
                       ),
                       CustomPaint(
-                        size: const Size(100, 100),
+                        size: const Size(135, 135),
                         painter: DashedCirclePainter(
                           color: Colors.black,
                           strokeWidth: 2,
@@ -282,19 +285,18 @@ class HomeScreen extends StatelessWidget {
                           radiusFactor: 0.85,
                         ),
                       ),
-                      // Clip image to fit inside the dashed circle
                       ClipOval(
                         child: Image.network(
                           filament['imageUrl'],
-                          height: 90,
-                          width: 90,
+                          height: 120,
+                          width: 120,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 4), // Space between image and brand name
+                const SizedBox(height: 4),  // space between image and brand name
                 Text(
                   filament['brand'] ?? 'Unknown',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(

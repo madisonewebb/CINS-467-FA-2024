@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'filament_detail_screen.dart'; // Import the detail screen
+import 'filament_detail_screen.dart';
 
 class FilteredFilamentsScreen extends StatelessWidget {
   final String filter;

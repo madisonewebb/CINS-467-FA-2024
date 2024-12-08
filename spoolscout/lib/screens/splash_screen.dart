@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,15 +12,24 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _checkAuthentication();
   }
 
-  void _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3), () {});
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
+  void _checkAuthentication() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
   }
 
   @override
@@ -27,7 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Wallpaper background
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -36,11 +46,9 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
-          // Foreground content
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Centered Logo
               Image.asset(
                 'assets/images/logo.png',
                 height: 150,
@@ -48,21 +56,21 @@ class _SplashScreenState extends State<SplashScreen> {
                 fit: BoxFit.contain,
               ),
               SizedBox(height: 20),
-              // "Loading Spool Scout" Text
+
               Text(
                 'Loading Spool Scout...',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'ChickenWonder', // Custom font
-                  color: Color.fromRGBO(37, 150, 190, 1), // Custom color
+                  fontFamily: 'ChickenWonder',
+                  color: Color.fromRGBO(37, 150, 190, 1),
                 ),
               ),
               SizedBox(height: 20),
-              // Circular Loading Indicator
+
               CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(37, 150, 190, 1), // Custom color
+                  Color.fromRGBO(37, 150, 190, 1),
                 ),
               ),
             ],

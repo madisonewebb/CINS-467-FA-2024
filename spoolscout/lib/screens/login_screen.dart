@@ -90,40 +90,47 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(
-                        fontFamily: 'ChickenWonder', // Custom font
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(
-                        fontFamily: 'ChickenWonder', // Custom font
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
-                    obscureText: true,
-                  ),
+                 TextField(
+  controller: emailController,
+  decoration: InputDecoration(
+    labelText: 'Email',
+    labelStyle: TextStyle(color: Colors.grey),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: const Color.fromRGBO(4, 107, 123, 1)),
+    ),
+    filled: true,
+    fillColor: Colors.white.withOpacity(0.8),
+  ),
+),
+
+SizedBox(height: 16),
+
+TextField(
+  controller: passwordController,
+  obscureText: true,
+  decoration: InputDecoration(
+    labelText: 'Password',
+    labelStyle: TextStyle(color: Colors.grey),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: const Color.fromRGBO(4, 107, 123, 1)),
+    ),
+    filled: true,
+    fillColor: Colors.white.withOpacity(0.8),
+  ),
+),
+
+
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // Your existing login logic here
                       final email = emailController.text.trim();
                       final password = passwordController.text.trim();
 
@@ -157,8 +164,8 @@ class LoginScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () => _signInWithGoogle(context),
                     icon: Image.asset(
-                      'assets/images/google-icon.png', // Path to the Google icon
-                      height: 32, // Size of the icon
+                      'assets/images/google-icon.png',
+                      height: 32,
                       width: 32,
                     ),
                     label: Text(
@@ -167,7 +174,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromRGBO(4, 107, 123, 1),
-                      foregroundColor: Colors.white, // Text color
+                      foregroundColor: Colors.white,
                       textStyle: const TextStyle(fontSize: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -186,7 +193,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 4), // Reduced vertical spacing
+                  SizedBox(height: 4),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
