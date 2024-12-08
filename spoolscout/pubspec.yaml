@@ -30,6 +30,7 @@ flutter:
   assets:
     - assets/images/wallpaper.png
     - assets/images/logo.png
+    - assets/images/google-icon.png
   fonts:
     - family: ChickenWonder
       fonts:

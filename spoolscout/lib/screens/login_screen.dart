@@ -65,65 +65,149 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background wallpaper
+          Image.asset(
+            'assets/images/wallpaper.png',
+            fit: BoxFit.cover,
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 40),
+                  // Centered Logo
+                  Center(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: 300,
+                      width: 300,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(
+                        fontFamily: 'ChickenWonder', // Custom font
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(
+                        fontFamily: 'ChickenWonder', // Custom font
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Your existing login logic here
+                      final email = emailController.text.trim();
+                      final password = passwordController.text.trim();
+
+                      if (email.isEmpty || password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please enter all fields')),
+                        );
+                        return;
+                      }
+
+                      FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: email, password: password)
+                          .then((value) {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      }).catchError((e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Login failed: ${e.message}')),
+                        );
+                      });
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(fontFamily: 'ChickenWonder',
+                      color: const Color.fromRGBO(4, 107, 123, 1),
+                      fontSize: 20
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => _signInWithGoogle(context),
+                    icon: Image.asset(
+                      'assets/images/google-icon.png', // Path to the Google icon
+                      height: 32, // Size of the icon
+                      width: 32,
+                    ),
+                    label: Text(
+                      'Sign in with Google',
+                      style: TextStyle(fontFamily: 'ChickenWonder'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(4, 107, 123, 1),
+                      foregroundColor: Colors.white, // Text color
+                      textStyle: const TextStyle(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () => _sendPasswordResetEmail(context),
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontFamily: 'ChickenWonder',
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4), // Reduced vertical spacing
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpScreen()),
+                      );
+                    },
+                    child: Text(
+                      "Don't have an account? Sign up here!",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontFamily: 'ChickenWonder',
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              obscureText: true,
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Your existing login logic here
-              },
-              child: Text('Login'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () => _signInWithGoogle(context),
-              icon: Icon(Icons.login),
-              label: Text('Sign in with Google'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, // Google brand color
-              ),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () => _sendPasswordResetEmail(context),
-              child: Text('Forgot Password?'),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpScreen()),
-                );
-              },
-              child: Text("Don't have an account? Sign up here!"),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

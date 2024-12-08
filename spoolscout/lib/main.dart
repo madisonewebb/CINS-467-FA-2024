@@ -19,6 +19,7 @@ class SpoolScoutApp extends StatelessWidget {
       title: 'Spool Scout',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'ChickenWonder', // Apply your custom font globally
       ),
       home: SplashScreen(), // Start with the SplashScreen
       routes: {
@@ -26,55 +27,6 @@ class SpoolScoutApp extends StatelessWidget {
         '/signup': (context) => SignUpScreen(),
         '/home': (context) => HomeScreen(),
       },
-    );
-  }
-}
-
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigateToAuthCheck();
-  }
-
-  void _navigateToAuthCheck() async {
-    await Future.delayed(const Duration(seconds: 3)); // Wait for 3 seconds
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AuthCheck()), // Navigate to AuthCheck
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // App logo
-            Image.asset(
-              'assets/images/logo.png', // Logo file path
-              height: 150,
-              width: 150,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 20),
-            CircularProgressIndicator(), // Loading spinner
-            SizedBox(height: 20),
-            Text(
-              'Loading Spool Scout...',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
