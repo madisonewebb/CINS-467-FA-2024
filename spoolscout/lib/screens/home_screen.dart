@@ -5,6 +5,7 @@ import 'filtered_filaments_screen.dart'; // Import filtered filaments screen
 import 'filament_detail_screen.dart'; // Import filament detail screen
 import 'profile_screen.dart'; // Import Profile Screen
 import '../widgets/badge_icon.dart'; // Ensure correct import path
+import 'dart:math';
 
 class HomeScreen extends StatelessWidget {
   final User? user = FirebaseAuth.instance.currentUser;
@@ -26,19 +27,32 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // App Bar Section
+                // App Bar Section
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Home',
-                        style: TextStyle(
-                          fontFamily: 'ChickenWonder',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Ensures text is readable
-                        ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/logo.png', // Path to the tiny logo
+                            height: 48, // Adjust size for the tiny logo
+                            width: 48,
+                          ),
+                          const SizedBox(
+                              width: 8), // Space between logo and text
+                          Text(
+                            'Home',
+                            style: TextStyle(
+                              fontFamily: 'ChickenWonder',
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(
+                                  4, 107, 123, 1), // Ensures text is readable
+                            ),
+                          ),
+                        ],
                       ),
                       GestureDetector(
                         onTap: () {
@@ -50,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                           );
                         },
                         child: CircleAvatar(
-                          radius: 20,
+                          radius: 22,
                           backgroundImage: user?.photoURL != null
                               ? NetworkImage(user!.photoURL!)
                               : AssetImage('assets/images/default_avatar.png')
@@ -60,6 +74,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+
                 // Categories Section
                 sectionHeader('Categories'),
                 horizontalBadgeList(
@@ -71,10 +86,8 @@ class HomeScreen extends StatelessWidget {
                     'Rigid',
                     'Transparent',
                   ],
-                  color: Colors.blueAccent,
                   context: context,
                 ),
-                // Popular Brands Section
                 sectionHeader('Popular Brands'),
                 horizontalBadgeList(
                   labels: [
@@ -83,10 +96,8 @@ class HomeScreen extends StatelessWidget {
                     'eSun',
                     'Hatchbox',
                   ],
-                  color: Colors.deepOrange,
                   context: context,
                 ),
-                // Popular Filament Types Section
                 sectionHeader('Popular Filament Types'),
                 horizontalBadgeList(
                   labels: [
@@ -95,9 +106,9 @@ class HomeScreen extends StatelessWidget {
                     'PETG',
                     'TPU',
                   ],
-                  color: Colors.green,
                   context: context,
                 ),
+
                 // Favorites Section
                 sectionHeader('Favorites'),
                 StreamBuilder<QuerySnapshot>(
@@ -175,22 +186,30 @@ class HomeScreen extends StatelessWidget {
           fontFamily: 'ChickenWonder',
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: Colors.black, // Ensures text is readable
+          color: Color.fromRGBO(4, 107, 123, 1), // Ensures text is readable
         ),
       ),
     );
   }
+  // Import for random color generation
 
   Widget horizontalBadgeList({
     required List<String> labels,
-    required Color color,
     required BuildContext context,
   }) {
+    final List<Color> randomColors = List.generate(
+      labels.length,
+      (index) => _generateRandomColor(),
+    );
+
     return SizedBox(
       height: 100,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        children: labels.map((label) {
+        children: labels.asMap().entries.map((entry) {
+          final index = entry.key;
+          final label = entry.value;
+
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -200,10 +219,21 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             },
-            child: BadgeWidget(label: label, backgroundColor: color),
+            child:
+                BadgeWidget(label: label, backgroundColor: randomColors[index]),
           );
         }).toList(),
       ),
+    );
+  }
+
+  Color _generateRandomColor() {
+    final Random random = Random();
+    return Color.fromARGB(
+      255,
+      random.nextInt(256), // Red
+      random.nextInt(256), // Green
+      random.nextInt(256), // Blue
     );
   }
 
@@ -269,7 +299,7 @@ class HomeScreen extends StatelessWidget {
                   filament['brand'] ?? 'Unknown',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 12,
-                        color: Colors.black,
+                        color: Color.fromRGBO(4, 107, 123, 1),
                       ),
                 ),
               ],

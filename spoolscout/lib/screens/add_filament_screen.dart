@@ -152,156 +152,185 @@ class _AddFilamentScreenState extends State<AddFilamentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // Extend body under the AppBar
       appBar: AppBar(
         title: Text('Add Filament'),
+        backgroundColor: Colors.transparent, // Make AppBar transparent
+        elevation: 0, // Remove shadow
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DropdownButtonFormField<String>(
-                value: _selectedType,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedType = newValue;
-                  });
-                },
-                items: filamentTypes
-                    .map((type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type),
-                        ))
-                    .toList(),
-                decoration: InputDecoration(
-                  labelText: 'Filament Type',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              if (_selectedType == 'Other')
-                TextField(
-                  controller: customTypeController,
-                  decoration: InputDecoration(
-                    labelText: 'Custom Filament Type',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedBrand,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedBrand = newValue;
-                  });
-                },
-                items: filamentBrands
-                    .map((brand) => DropdownMenuItem(
-                          value: brand,
-                          child: Text(brand),
-                        ))
-                    .toList(),
-                decoration: InputDecoration(
-                  labelText: 'Filament Brand',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              if (_selectedBrand == 'Other')
-                TextField(
-                  controller: customBrandController,
-                  decoration: InputDecoration(
-                    labelText: 'Custom Filament Brand',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              SizedBox(height: 16),
-              TextField(
-                controller: priceController,
-                decoration: InputDecoration(
-                  labelText: 'Price',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: weightController,
-                decoration: InputDecoration(
-                  labelText: 'Weight (g or kg)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: temperatureController,
-                decoration: InputDecoration(
-                  labelText: 'Ideal Temperature (°C)',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              SizedBox(height: 24),
-              Text('Filament Attributes (Optional):'),
-              Wrap(
-                spacing: 10,
-                children: filamentAttributes.map((attribute) {
-                  final bool isSelected =
-                      selectedAttributes.contains(attribute);
-                  return FilterChip(
-                    label: Text(attribute),
-                    selected: isSelected,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected) {
-                          selectedAttributes.add(attribute);
-                        } else {
-                          selectedAttributes.remove(attribute);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: customAttributeController,
-                decoration: InputDecoration(
-                  labelText: 'Custom Attribute (Optional)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 16),
-              if (_selectedImage != null)
-                Image.file(
-                  _selectedImage!,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _pickImageFromGallery,
-                    icon: Icon(Icons.photo_library),
-                    label: Text('Gallery'),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: _captureImageWithCamera,
-                    icon: Icon(Icons.camera),
-                    label: Text('Camera'),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Submit Filament'),
-              ),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Wallpaper background
+          Image.asset(
+            'assets/images/wallpaper.png',
+            fit: BoxFit.cover,
           ),
-        ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: _selectedType,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedType = newValue;
+                        });
+                      },
+                      items: filamentTypes
+                          .map((type) => DropdownMenuItem(
+                                value: type,
+                                child: Text(type),
+                              ))
+                          .toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Filament Type',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    if (_selectedType == 'Other')
+                      TextField(
+                        controller: customTypeController,
+                        decoration: InputDecoration(
+                          labelText: 'Custom Filament Type',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedBrand,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedBrand = newValue;
+                        });
+                      },
+                      items: filamentBrands
+                          .map((brand) => DropdownMenuItem(
+                                value: brand,
+                                child: Text(brand),
+                              ))
+                          .toList(),
+                      decoration: InputDecoration(
+                        labelText: 'Filament Brand',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    if (_selectedBrand == 'Other')
+                      TextField(
+                        controller: customBrandController,
+                        decoration: InputDecoration(
+                          labelText: 'Custom Filament Brand',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: priceController,
+                      decoration: InputDecoration(
+                        labelText: 'Price (in USD)',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: weightController,
+                      decoration: InputDecoration(
+                        labelText: 'Weight (in grams)',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: temperatureController,
+                      decoration: InputDecoration(
+                        labelText: 'Ideal Temperature (°C)',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 24),
+                    Text('Filament Attributes (Optional):'),
+                    Wrap(
+                      spacing: 10,
+                      children: filamentAttributes.map((attribute) {
+                        final bool isSelected =
+                            selectedAttributes.contains(attribute);
+                        return FilterChip(
+                          label: Text(attribute),
+                          selected: isSelected,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                selectedAttributes.add(attribute);
+                              } else {
+                                selectedAttributes.remove(attribute);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: customAttributeController,
+                      decoration: InputDecoration(
+                        labelText: 'Custom Attribute (Optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    if (_selectedImage != null)
+                      Image.file(
+                        _selectedImage!,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: _pickImageFromGallery,
+                          icon: Icon(Icons.photo_library,
+                              color: Color.fromRGBO(4, 107, 123, 1)),
+                          label: Text(
+                            'Gallery',
+                            style: TextStyle(
+                                color: Color.fromRGBO(4, 107, 123, 1)),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: _captureImageWithCamera,
+                          icon: Icon(Icons.camera,
+                              color: Color.fromRGBO(4, 107, 123, 1)),
+                          label: Text(
+                            'Camera',
+                            style: TextStyle(
+                                color: Color.fromRGBO(4, 107, 123, 1)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromRGBO(4, 107, 123, 1),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Submit Filament'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
