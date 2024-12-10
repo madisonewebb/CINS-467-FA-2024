@@ -53,7 +53,6 @@ class LoginScreen extends StatelessWidget {
             content: Text('Welcome, ${userCredential.user?.displayName}!')),
       );
 
-      // Navigate to the Home Screen
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +67,6 @@ class LoginScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background wallpaper
           Image.asset(
             'assets/images/wallpaper.png',
             fit: BoxFit.cover,
@@ -80,7 +78,6 @@ class LoginScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: 40),
-                  // Centered Logo
                   Center(
                     child: Image.asset(
                       'assets/images/logo.png',
@@ -90,44 +87,42 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
-                 TextField(
-  controller: emailController,
-  decoration: InputDecoration(
-    labelText: 'Email',
-    labelStyle: TextStyle(color: Colors.grey),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: const Color.fromRGBO(4, 107, 123, 1)),
-    ),
-    filled: true,
-    fillColor: Colors.white.withOpacity(0.8),
-  ),
-),
-
-SizedBox(height: 16),
-
-TextField(
-  controller: passwordController,
-  obscureText: true,
-  decoration: InputDecoration(
-    labelText: 'Password',
-    labelStyle: TextStyle(color: Colors.grey),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: const Color.fromRGBO(4, 107, 123, 1)),
-    ),
-    filled: true,
-    fillColor: Colors.white.withOpacity(0.8),
-  ),
-),
-
-
+                  TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                            color: const Color.fromRGBO(4, 107, 123, 1)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                            color: const Color.fromRGBO(4, 107, 123, 1)),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
@@ -154,10 +149,10 @@ TextField(
                     },
                     child: Text(
                       'Login',
-                      style: TextStyle(fontFamily: 'ChickenWonder',
-                      color: const Color.fromRGBO(4, 107, 123, 1),
-                      fontSize: 20
-                      ),
+                      style: TextStyle(
+                          fontFamily: 'ChickenWonder',
+                          color: const Color.fromRGBO(4, 107, 123, 1),
+                          fontSize: 20),
                     ),
                   ),
                   SizedBox(height: 16),
@@ -201,12 +196,17 @@ TextField(
                         MaterialPageRoute(builder: (context) => SignUpScreen()),
                       );
                     },
-                    child: Text(
-                      "Don't have an account? Sign up here!",
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        fontFamily: 'ChickenWonder',
-                        fontSize: 16,
+                    child: Center(
+                      // Center the text
+                      child: Text(
+                        "Don't have an account? Sign up here!",
+                        textAlign: TextAlign
+                            .center, // Ensure the text itself is centered
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          fontFamily: 'ChickenWonder',
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
