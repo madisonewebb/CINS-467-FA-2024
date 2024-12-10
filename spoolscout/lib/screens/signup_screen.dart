@@ -59,60 +59,94 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text('Sign Up'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 16),
-              _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _signUp,
-                      child: Text('Sign Up'),
-                    ),
-              SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // navigate back to login screen
-                },
-                child: Text('Already have an account? Log in here!'),
-              ),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Wallpaper background
+          Image.asset(
+            'assets/images/wallpaper.png',
+            fit: BoxFit.cover,
           ),
-        ),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.8),
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: confirmPasswordController,
+                      decoration: InputDecoration(
+                        labelText: 'Confirm Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.8),
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 16),
+                    _isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: _signUp,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromRGBO(4, 107, 123, 1),
+                              foregroundColor: Colors.white,
+                            ),
+                            child: Text('Sign Up'),
+                          ),
+                    SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // navigate back to login screen
+                      },
+                      child: Text(
+                        'Already have an account? Log in here!',
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

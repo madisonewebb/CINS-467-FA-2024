@@ -17,7 +17,8 @@ class SpoolScoutApp extends StatelessWidget {
     return MaterialApp(
       title: 'Spool Scout',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color.fromRGBO(
+            4, 107, 123, 1), // Replace with your primary color
         fontFamily: 'ChickenWonder',
       ),
       home: SplashScreen(), // start with the SplashScreen
