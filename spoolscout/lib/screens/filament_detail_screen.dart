@@ -101,16 +101,13 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
 
     try {
       if (isFavorite) {
-        // Remove from favorites
         await favoritesRef.delete();
         debugPrint('Removed from favorites: ${widget.filament['id']}');
       } else {
-        // Add to favorites
         await favoritesRef.set(widget.filament);
         debugPrint('Added to favorites: ${widget.filament['id']}');
       }
 
-      // Update local state
       setState(() {
         isFavorite = !isFavorite;
       });
@@ -133,16 +130,12 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
 
     try {
       if (inLibrary) {
-        //  remove from library
         await libraryRef.delete();
         debugPrint('Removed from library: ${widget.filament['id']}');
       } else {
-        //  add to library
         await libraryRef.set(widget.filament);
         debugPrint('Added to library: ${widget.filament['id']}');
       }
-
-      //  update local state
       setState(() {
         inLibrary = !inLibrary;
       });
@@ -163,6 +156,72 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
       }
     }
     return Row(children: stars);
+  }
+
+  Widget buildAverageRating() {
+    final filamentId = widget.filament['id'];
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('filaments')
+          .doc(filamentId)
+          .collection('reviews')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Row(
+            children: [
+              buildStarRating(0), // Placeholder empty stars while loading
+              SizedBox(width: 8),
+              Text(
+                'Loading...',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.black,
+                    ),
+              ),
+            ],
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Row(
+            children: [
+              buildStarRating(0), // Empty stars for no reviews
+              SizedBox(width: 8),
+              Text(
+                'No reviews yet',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.black,
+                    ),
+              ),
+            ],
+          );
+        }
+
+        final reviews = snapshot.data!.docs;
+        final totalRating = reviews.fold<double>(
+          0.0,
+          (sum, doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return sum + (data['rating'] as num).toDouble();
+          },
+        );
+        final averageRating = totalRating / reviews.length;
+
+        return Row(
+          children: [
+            buildStarRating(averageRating),
+            SizedBox(width: 8),
+            Text(
+              '${averageRating.toStringAsFixed(1)} / 5.0',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.black,
+                  ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget buildReviews() {
@@ -204,7 +263,197 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
     );
   }
 
+  void showReviewDialog(BuildContext context) {
+    final TextEditingController reviewController = TextEditingController();
+    int selectedRating = 0;
+    XFile? selectedImage;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.black.withOpacity(0.8),
+              title: Text(
+                'Leave a Review',
+                style: TextStyle(color: Colors.white),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedRating = index + 1;
+                            });
+                          },
+                          icon: Icon(
+                            index < selectedRating
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.amber,
+                          ),
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: reviewController,
+                      maxLines: 3,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Write your review...',
+                        hintStyle: TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.grey.withOpacity(0.2),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    if (selectedImage != null)
+                      Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.file(
+                              File(selectedImage!.path),
+                              height: 100,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                selectedImage = null;
+                              });
+                            },
+                            icon: Icon(Icons.delete),
+                            label: Text('Remove Photo'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final picker = ImagePicker();
+                        final image =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          setState(() {
+                            selectedImage = image;
+                          });
+                        }
+                      },
+                      icon: Icon(Icons.photo),
+                      label: Text('Add a Photo'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black.withOpacity(0.7),
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey,
+                  ),
+                  child: Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedRating > 0 &&
+                        reviewController.text.isNotEmpty) {
+                      // Submit the review
+                      await submitReview(
+                        widget.filament['id'],
+                        selectedRating,
+                        reviewController.text,
+                        selectedImage,
+                      );
+                      Navigator.pop(context); // Close dialog
+                    } else {
+                      // Show error message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Please provide a rating and a review!',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(4, 107, 123, 1),
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text('Submit'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> submitReview(
+      String filamentId, int rating, String text, XFile? photo) async {
+    String? photoUrl;
+
+    if (photo != null) {
+      try {
+        final storageRef =
+            FirebaseStorage.instance.ref().child('reviews/${photo.name}');
+        final uploadTask = await storageRef.putFile(File(photo.path));
+        photoUrl = await uploadTask.ref.getDownloadURL();
+      } catch (e) {
+        debugPrint('Error uploading photo: $e');
+      }
+    }
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final userName = user?.displayName ?? 'Anonymous';
+
+      await FirebaseFirestore.instance
+          .collection('filaments')
+          .doc(filamentId)
+          .collection('reviews')
+          .add({
+        'rating': rating.toDouble(), // Ensure rating is stored as double
+        'text': text,
+        'photoUrl': photoUrl,
+        'timestamp': FieldValue.serverTimestamp(),
+        'userName': userName,
+      });
+
+      setState(() {}); // Refresh the reviews immediately after adding
+      debugPrint('Review submitted successfully!');
+    } catch (e) {
+      debugPrint('Error submitting review: $e');
+    }
+  }
+
   Widget buildReviewCard(Map<String, dynamic> review) {
+    final rating = (review['rating'] is int)
+        ? (review['rating'] as int).toDouble()
+        : (review['rating'] ?? 0.0) as double;
+
     return Card(
       color: Colors.black.withOpacity(0.6),
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -215,7 +464,7 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
           children: [
             Row(
               children: [
-                buildStarRating(review['rating']),
+                buildStarRating(rating),
                 SizedBox(width: 8),
                 Text(
                   review['userName'] ?? 'Anonymous',
@@ -252,135 +501,6 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
     );
   }
 
-  void showReviewDialog(BuildContext context) {
-    final TextEditingController reviewController = TextEditingController();
-    int selectedRating = 0;
-    XFile? selectedImage;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.black.withOpacity(0.8),
-              title: Text(
-                'Leave a Review',
-                style: TextStyle(color: Colors.white),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(5, (index) {
-                      return IconButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedRating = index + 1;
-                          });
-                        },
-                        icon: Icon(
-                          index < selectedRating
-                              ? Icons.star
-                              : Icons.star_border,
-                          color: Colors.amber,
-                        ),
-                      );
-                    }),
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: reviewController,
-                    maxLines: 3,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Write your review...',
-                      hintStyle: TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey.withOpacity(0.2),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final picker = ImagePicker();
-                      selectedImage =
-                          await picker.pickImage(source: ImageSource.gallery);
-                    },
-                    icon: Icon(Icons.photo),
-                    label: Text('Add a Photo'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black.withOpacity(0.7),
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                      ),
-                      child: Text('Cancel'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (selectedRating > 0) {
-                          await submitReview(
-                            widget.filament['id'],
-                            selectedRating,
-                            reviewController.text,
-                            selectedImage,
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(4, 107, 123, 1),
-                        foregroundColor: Colors.white,
-                      ),
-                      child: Text('Submit'),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> submitReview(
-      String filamentId, int rating, String text, XFile? photo) async {
-    String? photoUrl;
-
-    if (photo != null) {
-      final storageRef =
-          FirebaseStorage.instance.ref().child('reviews/${photo.name}');
-      final uploadTask = await storageRef.putFile(File(photo.path));
-      photoUrl = await uploadTask.ref.getDownloadURL();
-    }
-
-    await FirebaseFirestore.instance
-        .collection('filaments')
-        .doc(filamentId)
-        .collection('reviews')
-        .add({
-      'rating': rating,
-      'text': text,
-      'photoUrl': photoUrl,
-      'timestamp': FieldValue.serverTimestamp(),
-      'userName': FirebaseAuth.instance.currentUser?.displayName ?? 'Anonymous',
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -413,7 +533,7 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
                   children: [
                     Image.network(
                       widget.filament['imageUrl'] ?? '',
-                      height: 200,
+                      height: 400,
                       width: double.infinity,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Icon(
@@ -438,19 +558,7 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
                           ),
                     ),
                     SizedBox(height: 16),
-                    Row(
-                      children: [
-                        buildStarRating(widget.filament['rating'] ?? 0.0),
-                        SizedBox(width: 8),
-                        Text(
-                          '${widget.filament['rating']?.toStringAsFixed(1) ?? '0.0'} / 5.0',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.black,
-                                  ),
-                        ),
-                      ],
-                    ),
+                    buildAverageRating(), // Display dynamic average rating
                     SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: _toggleFavorite,
@@ -539,8 +647,6 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SizedBox(height: 8),
-                    buildReviews(),
                     SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: () => showReviewDialog(context),
@@ -551,6 +657,8 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
                         foregroundColor: Colors.white,
                       ),
                     ),
+                    SizedBox(height: 8),
+                    buildReviews(),
                   ],
                 ),
               ),
