@@ -10,16 +10,26 @@ class AdminPanelScreen extends StatelessWidget {
       final docRef =
           FirebaseFirestore.instance.collection('submittedFilaments').doc(id);
 
-      // move to the approved filaments collection upon approval
       final docSnapshot = await docRef.get();
       if (docSnapshot.exists) {
-        final filamentData = docSnapshot.data();
+        final filamentData = docSnapshot.data() as Map<String, dynamic>;
+
+        // generate a unique ID for the approved filament
+        final uniqueId =
+            FirebaseFirestore.instance.collection('approvedFilaments').doc().id;
+
+        // add the unique ID to the filament's data
+        filamentData['id'] = uniqueId;
+
         await FirebaseFirestore.instance
             .collection('approvedFilaments')
-            .doc(id)
-            .set(filamentData!);
+            .doc(uniqueId)
+            .set(filamentData);
+
+        // delete the original submission
         await docRef.delete();
 
+        // show a success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Filament approved successfully!')),
         );
@@ -50,7 +60,7 @@ class AdminPanelScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,  // extend the body behind AppBar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text('Admin Panel'),
         backgroundColor: Colors.transparent,

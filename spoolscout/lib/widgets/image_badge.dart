@@ -13,24 +13,24 @@ class ImageBadgeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180, // Increased size
-      height: 180, // Increased size
-      margin: const EdgeInsets.symmetric(horizontal: 16), // Adjusted spacing
+      width: 150, // Same size as BadgeWidget
+      height: 150, // Same size as BadgeWidget
+      margin: const EdgeInsets.symmetric(horizontal: 10), // Consistent margin
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Solid outer circle
           CustomPaint(
-            size: const Size(180, 180), // Adjust size
+            size: const Size(150, 150),
             painter: SolidCirclePainter(
               color: Colors.black,
-              strokeWidth: 6, // Increased stroke width
+              strokeWidth: 4.5,
             ),
           ),
           // Solid circle for background
           Container(
-            width: 160, // Increased size
-            height: 160, // Increased size
+            width: 135,
+            height: 135,
             decoration: BoxDecoration(
               color: backgroundColor,
               shape: BoxShape.circle,
@@ -38,25 +38,27 @@ class ImageBadgeWidget extends StatelessWidget {
           ),
           // Dashed inner circle
           CustomPaint(
-            size: const Size(180, 180), // Adjust size
+            size: const Size(150, 150),
             painter: DashedCirclePainter(
               color: Colors.black,
-              strokeWidth: 4, // Increased stroke width
-              dashLength: 10, // Increased dash length
-              radiusFactor: 0.85, // Keep the same radius factor
+              strokeWidth: 3,
+              dashLength: 7.5,
+              radiusFactor: 0.85,
             ),
           ),
-          // Image instead of text
-          ClipOval(
-            child: Image.network(
-              imageUrl,
-              width: 140, // Adjusted size to fit the larger badge
-              height: 140, // Adjusted size
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Icon(
-                Icons.image_not_supported,
-                size: 60, // Larger placeholder icon
-                color: Colors.grey,
+          // Image in the center
+          Positioned(
+            child: ClipOval(
+              child: Image.network(
+                imageUrl,
+                width: 120,
+                height: 120,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.image_not_supported,
+                  size: 50,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
@@ -72,7 +74,7 @@ class SolidCirclePainter extends CustomPainter {
 
   SolidCirclePainter({
     required this.color,
-    this.strokeWidth = 6.0, // Updated default
+    this.strokeWidth = 4.5,
   });
 
   @override
@@ -98,9 +100,9 @@ class DashedCirclePainter extends CustomPainter {
 
   DashedCirclePainter({
     required this.color,
-    this.strokeWidth = 4.0, // Updated default
-    this.dashLength = 10.0, // Updated default
-    this.radiusFactor = 0.85, // Keep the same
+    this.strokeWidth = 3.0,
+    this.dashLength = 7.5,
+    this.radiusFactor = 0.85,
   });
 
   @override
@@ -111,7 +113,7 @@ class DashedCirclePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final double radius = (size.width / 2) * radiusFactor - strokeWidth;
-    const double gapSize = 10.0; // Adjusted to match new dashLength
+    const double gapSize = 7.5;
 
     double totalCircumference = 2 * 3.141592653589793 * radius;
     double dashCount =

@@ -10,12 +10,13 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final AuthService authService = AuthService();
 
-  bool _isLoading = false; // To display a loading spinner during sign-up
+  bool _isLoading = false; // to display a loading spinner during sign-up
 
-  // Sign-up logic
+  // sign-up logic
   Future<void> _signUp() async {
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -34,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         passwordController.text,
       );
       if (user != null) {
-        // Navigate to Home Screen on successful sign-up
+        // navigate to Home Screen on successful sign-up
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -71,7 +72,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               SizedBox(height: 16),
@@ -79,7 +81,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 obscureText: true,
               ),
@@ -88,7 +91,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: confirmPasswordController,
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 obscureText: true,
               ),
@@ -102,7 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Navigate back to login screen
+                  Navigator.pop(context); // navigate back to login screen
                 },
                 child: Text('Already have an account? Log in here!'),
               ),

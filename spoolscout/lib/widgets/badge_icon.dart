@@ -15,7 +15,7 @@ class BadgeWidget extends StatelessWidget {
     return Container(
       width: 150, // Increased size (100 * 1.5)
       height: 150, // Increased size (100 * 1.5)
-      margin: const EdgeInsets.symmetric(horizontal: 12), // Adjusted spacing
+      margin: const EdgeInsets.symmetric(horizontal: 10), // Adjusted spacing
       child: Stack(
         alignment: Alignment.center,
         children: [

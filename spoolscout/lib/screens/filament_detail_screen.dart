@@ -60,14 +60,70 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
   }
 
   Future<void> _loadUserPreferences() async {
-  if (user == null || widget.filament['id'] == null) return;
+    if (user == null || widget.filament['id'] == null) return;
 
-  try {
+    try {
+      final favoritesRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .collection('favorites')
+          .doc(widget.filament['id']);
+
+      final libraryRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .collection('library')
+          .doc(widget.filament['id']);
+
+      final isFavoriteDoc = await favoritesRef.get();
+      final inLibraryDoc = await libraryRef.get();
+
+      setState(() {
+        isFavorite = isFavoriteDoc.exists;
+        inLibrary = inLibraryDoc.exists;
+      });
+    } catch (e) {
+      debugPrint('Error loading user preferences: $e');
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (user == null || widget.filament['id'] == null) {
+      debugPrint('User or filament ID is null');
+      return;
+    }
+
     final favoritesRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
         .collection('favorites')
         .doc(widget.filament['id']);
+
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        await favoritesRef.delete();
+        debugPrint('Removed from favorites: ${widget.filament['id']}');
+      } else {
+        // Add to favorites
+        await favoritesRef.set(widget.filament);
+        debugPrint('Added to favorites: ${widget.filament['id']}');
+      }
+
+      // Update local state
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    } catch (e) {
+      debugPrint('Error toggling favorite: $e');
+    }
+  }
+
+  Future<void> _toggleLibrary() async {
+    if (user == null || widget.filament['id'] == null) {
+      debugPrint('User or filament ID is null');
+      return;
+    }
 
     final libraryRef = FirebaseFirestore.instance
         .collection('users')
@@ -75,84 +131,25 @@ class _FilamentDetailScreenState extends State<FilamentDetailScreen> {
         .collection('library')
         .doc(widget.filament['id']);
 
-    final isFavoriteDoc = await favoritesRef.get();
-    final inLibraryDoc = await libraryRef.get();
+    try {
+      if (inLibrary) {
+        //  remove from library
+        await libraryRef.delete();
+        debugPrint('Removed from library: ${widget.filament['id']}');
+      } else {
+        //  add to library
+        await libraryRef.set(widget.filament);
+        debugPrint('Added to library: ${widget.filament['id']}');
+      }
 
-    setState(() {
-      isFavorite = isFavoriteDoc.exists;
-      inLibrary = inLibraryDoc.exists;
-    });
-  } catch (e) {
-    debugPrint('Error loading user preferences: $e');
-  }
-}
-
-
-Future<void> _toggleFavorite() async {
-  if (user == null || widget.filament['id'] == null) {
-    debugPrint('User or filament ID is null');
-    return;
-  }
-
-  final favoritesRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(user!.uid)
-      .collection('favorites')
-      .doc(widget.filament['id']);
-
-  try {
-    if (isFavorite) {
-      // Remove from favorites
-      await favoritesRef.delete();
-      debugPrint('Removed from favorites: ${widget.filament['id']}');
-    } else {
-      // Add to favorites
-      await favoritesRef.set(widget.filament);
-      debugPrint('Added to favorites: ${widget.filament['id']}');
+      //  update local state
+      setState(() {
+        inLibrary = !inLibrary;
+      });
+    } catch (e) {
+      debugPrint('Error toggling library: $e');
     }
-
-    // Update local state
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-  } catch (e) {
-    debugPrint('Error toggling favorite: $e');
   }
-}
-
-
-Future<void> _toggleLibrary() async {
-  if (user == null || widget.filament['id'] == null) {
-    debugPrint('User or filament ID is null');
-    return;
-  }
-
-  final libraryRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(user!.uid)
-      .collection('library')
-      .doc(widget.filament['id']);
-
-  try {
-    if (inLibrary) {
-      //  remove from library
-      await libraryRef.delete();
-      debugPrint('Removed from library: ${widget.filament['id']}');
-    } else {
-      //  add to library
-      await libraryRef.set(widget.filament);
-      debugPrint('Added to library: ${widget.filament['id']}');
-    }
-
-    //  update local state
-    setState(() {
-      inLibrary = !inLibrary;
-    });
-  } catch (e) {
-    debugPrint('Error toggling library: $e');
-  }
-}
-
 
   Widget buildStarRating(double rating) {
     List<Widget> stars = [];
@@ -309,8 +306,8 @@ Future<void> _toggleLibrary() async {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final picker = ImagePicker();
-                      selectedImage = await picker.pickImage(
-                          source: ImageSource.gallery);
+                      selectedImage =
+                          await picker.pickImage(source: ImageSource.gallery);
                     },
                     icon: Icon(Icons.photo),
                     label: Text('Add a Photo'),
@@ -447,12 +444,10 @@ Future<void> _toggleLibrary() async {
                         SizedBox(width: 8),
                         Text(
                           '${widget.filament['rating']?.toStringAsFixed(1) ?? '0.0'} / 5.0',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                color: Colors.black,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.black,
+                                  ),
                         ),
                       ],
                     ),
@@ -476,9 +471,7 @@ Future<void> _toggleLibrary() async {
                     ElevatedButton.icon(
                       onPressed: _toggleLibrary,
                       icon: Icon(
-                        inLibrary
-                            ? Icons.library_add_check
-                            : Icons.library_add,
+                        inLibrary ? Icons.library_add_check : Icons.library_add,
                         color: Color.fromRGBO(4, 107, 123, 1),
                       ),
                       label: Text(

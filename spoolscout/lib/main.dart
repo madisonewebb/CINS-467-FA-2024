@@ -4,11 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Ensure Firebase is initialized
+  await Firebase.initializeApp(); // initialize Firebase
   runApp(SpoolScoutApp());
 }
 
@@ -19,9 +18,9 @@ class SpoolScoutApp extends StatelessWidget {
       title: 'Spool Scout',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'ChickenWonder', // Apply your custom font globally
+        fontFamily: 'ChickenWonder',
       ),
-      home: SplashScreen(), // Start with the SplashScreen
+      home: SplashScreen(), // start with the SplashScreen
       routes: {
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
@@ -44,10 +43,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToAuthCheck() async {
-    await Future.delayed(const Duration(seconds: 3)); // Wait for 3 seconds
+    await Future.delayed(const Duration(seconds: 3)); // wait for 3 seconds
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => AuthCheck()), // Navigate to AuthCheck
+      MaterialPageRoute(
+          builder: (context) => AuthCheck()), // now, navigate to AuthCheck
     );
   }
 
@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/images/wallpaper.png', // Ensure wallpaper exists
+            'assets/images/wallpaper.png',
             fit: BoxFit.cover,
           ),
           Center(
@@ -66,13 +66,13 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/logo.png', // Your logo path
+                  'assets/images/logo.png',
                   height: 150,
                   width: 150,
                 ),
                 SizedBox(height: 20),
                 CircularProgressIndicator(
-                  color: const Color.fromRGBO(4, 107, 123, 1), // Custom spinner color
+                  color: const Color.fromRGBO(4, 107, 123, 1),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -100,15 +100,14 @@ class AuthCheck extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a temporary loading screen
           return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasData) {
-          // User is authenticated; navigate to HomeScreen
+          // user is authenticated; navigate to HomeScreen
           return HomeScreen();
         } else {
-          // User is not authenticated; show LoginScreen
+          // user is not authenticated; show LoginScreen
           return LoginScreen();
         }
       },
